@@ -10,9 +10,11 @@ public class Main {
 
         RS232 rs232 = new RS232("COM3",9600);
         rs232.open();
-        rs232.write("Ala");
+        String str = rs232.writeAndRead("OLAAAAAAAAAAAAAAAA");
         rs232.close();
+        System.out.println(str);
 
     }
+
 
 }
