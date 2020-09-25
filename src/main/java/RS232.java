@@ -6,13 +6,9 @@ import java.io.IOException;
 
 
 public class RS232 {
-    private String port;
-    private int baudRate;
-    NRSerialPort serial;
+    private final NRSerialPort serial;
 
     public RS232(String port, int baudRate) {
-        this.port = port;
-        this.baudRate = baudRate;
         serial = new NRSerialPort(port, baudRate);
     }
 
@@ -32,9 +28,7 @@ public class RS232 {
                 outs.write(c);
             }
             Thread.sleep(5);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -47,8 +41,8 @@ public class RS232 {
                 if (ins.available() > 0) {
                     char b = (char) ins.read();
                     System.out.print(b);
+                    Thread.sleep(5);
                 }
-                Thread.sleep(5);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -61,7 +55,7 @@ public class RS232 {
 
         String responseStr = "";
         this.write(dataToWrite);
-
+     //   System.out.println(addCharEnd("12345",'a'));
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -70,18 +64,16 @@ public class RS232 {
         try(DataInputStream ins = new DataInputStream(serial.getInputStream())) {
             while(ins.available()>0) {
                 char b = (char) ins.read();
-                responseStr=addCharOnEnd(responseStr,b);
+                responseStr=addCharEnd(responseStr,b);
                 Thread.sleep(5);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return responseStr;
     }
 
-/*    public String addChar(String str, char ch, int position) {
+  /*  public String addChar(String str, char ch, int position) {
         int len = str.length();
         char[] updatedArr = new char[len + 1];
         str.getChars(0, position, updatedArr, 0);
@@ -90,13 +82,21 @@ public class RS232 {
         return new String(updatedArr);
     }*/
 
+    public String addCharEnd(String str, char ch) {
+        int len = str.length();
+        char[] updatedArr = new char[len + 1];
+        str.getChars(0,len, updatedArr, 0);
+        updatedArr[updatedArr.length-1] = ch;
+       return new String(updatedArr);
+    }
+
    /* public String addChar(String str, char ch, int position) {
         return str.substring(0, position) + ch + str.substring(position);
     }*/
-
+/*
     public String addCharOnEnd(String str, char ch) {
         return str.substring(0, str.length()) + ch ;
-    }
+    }*/
 
 
    /* public String addChar(String str, char ch, int position) {
